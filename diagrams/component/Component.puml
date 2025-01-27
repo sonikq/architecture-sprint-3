@@ -1,0 +1,86 @@
+@startuml
+!include <C4/C4_Component>
+
+System_Boundary(s1, "Микросервис 'Управление отоплением'") {
+  Component(api1, "API", "Spring REST API", "Принимает HTTP-запросы от клиента для управления отоплением.")
+  Component(command_handler1, "Обработчик команд", "Spring Bean", "Обрабатывает команды управления отоплением (включение, выключение, изменение температуры).")
+  Component(state_manager1, "Менеджер состояния", "Java", "Отслеживает текущее состояние отопления и обновляет его при изменении.")
+  Component(heater_controller1, "Контроллер отопителя", "Java", "Управляет физическими отопительными приборами через протоколы взаимодействия.")
+  Component(temperature_service1, "Сервис температуры", "Java", "Проводит измерение температуры и передает данные в систему.")
+  Component(database1, "База данных", "PostgreSQL", "Хранит настройки отопления и текущие состояния приборов.")
+
+  api1 --> command_handler1 : Передает команды на управление отоплением
+  command_handler1 --> state_manager1 : Запрашивает текущее состояние отопления
+  state_manager1 --> heater_controller1 : Передает команды на изменение состояния отопителей
+  state_manager1 --> temperature_service1 : Получает актуальную температуру
+  state_manager1 --> database1 : Сохраняет изменения в состоянии отопления
+  temperature_service1 --> database1 : Записывает текущие показания температуры
+  heater_controller1 --> database1 : Запрашивает настройки отопителей для корректной работы
+}
+
+System_Boundary(s2, "Микросервис 'Управление освещением'") {
+  Component(api2, "API", "Spring REST API", "Принимает HTTP-запросы для управления освещением.")
+  Component(command_handler2, "Обработчик команд", "Spring Bean", "Обрабатывает команды управления освещением.")
+  Component(state_manager2, "Менеджер состояния", "Java", "Отслеживает текущее состояние освещения.")
+  Component(light_controller2, "Контроллер освещения", "Java", "Управляет физическими источниками света.")
+  Component(database2, "База данных", "PostgreSQL", "Хранит информацию о текущем состоянии освещения.")
+
+  api2 --> command_handler2 : Передает команды на управление освещением
+  command_handler2 --> state_manager2 : Запрашивает текущее состояние освещения
+  state_manager2 --> light_controller2 : Передает команды на управление источниками света
+  state_manager2 --> database2 : Сохраняет изменения в состоянии освещения
+}
+
+System_Boundary(s3, "Микросервис 'Управление воротами'") {
+  Component(api3, "API", "Spring REST API", "Принимает HTTP-запросы для управления воротами.")
+  Component(command_handler3, "Обработчик команд", "Spring Bean", "Обрабатывает команды управления воротами.")
+  Component(state_manager3, "Менеджер состояния", "Java", "Отслеживает текущее состояние ворот.")
+  Component(gate_controller3, "Контроллер ворот", "Java", "Управляет автоматическими воротами.")
+  Component(database3, "База данных", "PostgreSQL", "Хранит данные о состоянии ворот.")
+
+  api3 --> command_handler3 : Передает команды на управление воротами
+  command_handler3 --> state_manager3 : Запрашивает текущее состояние ворот
+  state_manager3 --> gate_controller3 : Передает команды на управление воротами
+  state_manager3 --> database3 : Сохраняет изменения в состоянии ворот
+}
+
+System_Boundary(s4, "Микросервис 'Наблюдение'") {
+  Component(api4, "API", "Spring REST API", "Принимает HTTP-запросы для управления системой наблюдения.")
+  Component(command_handler4, "Обработчик команд", "Spring Bean", "Обрабатывает команды управления системой наблюдения.")
+  Component(camera_manager4, "Менеджер камер", "Java", "Управляет подключением и состоянием камер наблюдения.")
+  Component(sensor_manager4, "Менеджер датчиков", "Java", "Управляет датчиками движения и других сенсоров.")
+  Component(database4, "База данных", "PostgreSQL", "Хранит данные о камерах и датчиках.")
+
+  api4 --> command_handler4 : Передает команды на управление наблюдением
+  command_handler4 --> camera_manager4 : Управляет камерами наблюдения
+  command_handler4 --> sensor_manager4 : Управляет датчиками
+  camera_manager4 --> database4 : Сохраняет данные о камерах
+  sensor_manager4 --> database4 : Сохраняет данные о датчиках
+}
+
+System_Boundary(s5, "Микросервис 'Управление устройствами'") {
+  Component(api5, "API", "Spring REST API", "Принимает HTTP-запросы для регистрации и управления устройствами.")
+  Component(device_registry5, "Регистратор устройств", "Java", "Регистрирует новые устройства и их типы в системе.")
+  Component(command_handler5, "Обработчик команд", "Spring Bean", "Обрабатывает команды для управления устройствами.")
+  Component(state_manager5, "Менеджер состояния устройств", "Java", "Отслеживает состояние устройств и обновляет их.")
+  Component(database5, "База данных", "PostgreSQL", "Хранит информацию о подключенных устройствах.")
+
+  api5 --> device_registry5 : Регистрирует новые устройства
+  api5 --> command_handler5 : Передает команды на управление устройствами
+  command_handler5 --> state_manager5 : Запрашивает текущее состояние устройств
+  state_manager5 --> database5 : Обновляет состояние устройств
+}
+
+System_Boundary(s6, "Микросервис 'Управление пользователями'") {
+  Component(api6, "API", "Spring REST API", "Принимает HTTP-запросы для управления пользователями.")
+  Component(auth_service6, "Сервис аутентификации", "Java", "Обрабатывает регистрацию, вход и выход пользователей.")
+  Component(user_profile_service6, "Сервис профилей пользователей", "Java", "Управляет данными пользователей и их правами доступа.")
+  Component(database6, "База данных", "PostgreSQL", "Хранит данные пользователей.")
+
+  api6 --> auth_service6 : Передает запросы на аутентификацию
+  api6 --> user_profile_service6 : Передает запросы на управление профилями
+  auth_service6 --> database6 : Проверяет данные аутентификации
+  user_profile_service6 --> database6 : Сохраняет и извлекает информацию о пользователях
+}
+
+@enduml

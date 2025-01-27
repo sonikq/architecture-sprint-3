@@ -1,0 +1,61 @@
+@startuml
+
+title Диаграмма сущностей
+
+entity User {
+  * id : UUID
+  * name : String
+  * email : String
+  * password_hash : String
+  * created_at : DateTime
+}
+
+entity House {
+  * id : UUID
+  * address : String
+  * user_id : UUID
+}
+
+entity Device {
+  * id : UUID
+  * type_id : UUID
+  * house_id : UUID
+  * serial_number : String
+  * status : Boolean
+  * installed_at : DateTime
+}
+
+entity DeviceType {
+  * id : UUID
+  * name : String
+  * description : String
+}
+
+entity Module {
+  * id : UUID
+  * name : String
+  * description : String
+  * created_at : DateTime
+}
+
+entity TelemetryData {
+  * id : UUID
+  * device_id : UUID
+  * timestamp : DateTime
+  * temperature : Float
+  * power_status : Boolean
+  * other_data : JSON
+}
+
+entity Module_DeviceType {
+  * module_id : UUID
+  * device_type_id : UUID
+}
+
+User }o--|| House : "owns"
+House }o--|| Device : "contains"
+Device }o--|| DeviceType : "has a"
+Device }o--|| TelemetryData : "generates"
+Module }o--o{ Module_DeviceType : "includes"
+DeviceType }o--o{ Module_DeviceType : "belongs to"
+@enduml

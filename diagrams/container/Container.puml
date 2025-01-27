@@ -1,0 +1,58 @@
+@startuml
+!include <C4/C4_Container>
+
+
+' Define System Boundary
+System_Boundary(s1, "Экосистема умного дома") {
+
+  ' External Users
+  Person(user, "Пользователь", "Использует экосистему для управления домом и устройствами.")
+
+  ' API Gateway
+  Container(api_gateway, "API Gateway", "Java Spring", "Маршрутизирует запросы к микросервисам и управляет аутентификацией.")
+
+  ' Microservices
+  Container(heating_service, "Управление отоплением", "Java", "Управляет состоянием отопительных приборов (включение/выключение).")
+  Container(lighting_service, "Управление освещением", "Java", "Управляет состоянием освещения в доме.")
+  Container(gate_service, "Управление воротами", "Java", "Управляет автоматическими воротами в доме.")
+  Container(surveillance_service, "Наблюдение", "Java", "Отслеживает данные с камер и датчиков для наблюдения за домом.")
+  Container(device_service, "Управление устройствами", "Java", "Регистрация и управление подключёнными устройствами.")
+  Container(user_service, "Управление пользователями", "Java", "Управляет данными пользователей и их правами доступа.")
+
+  ' Databases - Каждый микросервис использует свою БД
+  ContainerDb(heating_db, "База данных отопления", "PostgreSQL", "Хранит данные о состоянии отопительных приборов и настройках.")
+  ContainerDb(lighting_db, "База данных освещения", "PostgreSQL", "Хранит данные о состоянии освещения в доме.")
+  ContainerDb(gate_db, "База данных ворот", "PostgreSQL", "Хранит данные о состоянии автоматических ворот.")
+  ContainerDb(surveillance_db, "База данных наблюдения", "PostgreSQL", "Хранит данные с камер и датчиков для наблюдения.")
+  ContainerDb(device_db, "База данных устройств", "PostgreSQL", "Хранит данные о подключённых устройствах и их состояниях.")
+  ContainerDb(user_db, "База данных пользователей", "PostgreSQL", "Хранит информацию о пользователях, их устройствах и настройках.")
+
+  ' Kafka (Event Bus) для асинхронной передачи данных
+  Container(kafka, "Шина данных (Kafka)", "Kafka", "Передаёт события между микросервисами для асинхронной обработки.")
+
+  ' Relationships
+  user --> api_gateway : Использует API для управления системой
+  api_gateway --> heating_service : Передаёт запросы на управление отоплением
+  api_gateway --> lighting_service : Передаёт запросы на управление освещением
+  api_gateway --> gate_service : Передаёт запросы на управление воротами
+  api_gateway --> surveillance_service : Передаёт запросы на управление наблюдением
+  api_gateway --> device_service : Передаёт запросы на управление устройствами
+  api_gateway --> user_service : Передаёт запросы на управление пользователями
+
+  heating_service --> heating_db : Читает и обновляет данные о состоянии отопления
+  lighting_service --> lighting_db : Читает и обновляет данные о состоянии освещения
+  gate_service --> gate_db : Читает и обновляет данные о состоянии ворот
+  surveillance_service --> surveillance_db : Читает данные с датчиков и камер
+  device_service --> device_db : Регистрирует новые устройства и обновляет их состояние
+  user_service --> user_db : Управляет данными пользователей
+
+  kafka --> heating_service : Отправка событий изменения состояния отопления
+  kafka --> lighting_service : Отправка событий изменения состояния освещения
+  kafka --> gate_service : Отправка событий изменения состояния ворот
+  kafka --> surveillance_service : Отправка событий наблюдения
+  kafka --> device_service : Отправка событий обновлений устройств
+  kafka --> user_service : Отправка событий управления пользователями
+
+}
+
+@enduml
