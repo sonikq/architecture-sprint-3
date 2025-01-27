@@ -61,9 +61,9 @@
 
 ### 5. Визуализация контекста системы — диаграмма С4
 
-```markdown
-[Диаграмма контекста монолитного приложения](diagrams/context/Monolith.puml)
-```
+
+### [Диаграмма контекста монолитного приложения](diagrams/context/Monolith.puml)
+
 
 # Задание 2. Проектирование микросервисной архитектуры
 
@@ -72,30 +72,24 @@
 
 **Диаграмма контейнеров (Containers)**
 
-```markdown
-[C4 — Уровень контейнеров](diagrams/container/Container.puml)
-```
+### [C4 — Уровень контейнеров](diagrams/container/Container.puml)
 
 **Диаграмма компонентов (Components)**
 
-```markdown
-[C4 — Уровень компонентов](diagrams/component/Component.puml)
-```
+
+### [C4 — Уровень компонентов](diagrams/component/Component.puml)
 
 **Диаграммы кода (Code)**
 
-```markdown
-- [Управление отоплением](diagrams/code/Heating_Service.puml)
-```
-```markdown
-- [Управление пользователями](diagrams/code/User_Service.puml)
-```
+
+- ### [Управление отоплением](diagrams/code/Heating_Service.puml)
+
+
+- ### [Управление пользователями](diagrams/code/User_Service.puml)
 
 # Задание 3. Разработка ER-диаграммы
 
-```markdown
-[ER-диаграмма](diagrams/ER.puml)
-```
+### [ER-диаграмма](diagrams/ER.puml)
 
 ## Идентификация сущностей и их атрибутов
 1. User (Пользователь)
