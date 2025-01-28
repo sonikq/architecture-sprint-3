@@ -52,7 +52,7 @@ entity Module_DeviceType {
   * device_type_id : UUID
 }
 
-User }o--|| House : "owns"
+User }o-o{ House : "owns"
 House }o--|| Device : "contains"
 Device }o--|| DeviceType : "has a"
 Device }o--|| TelemetryData : "generates"
