@@ -1,0 +1,46 @@
+@startuml
+!include <C4/C4_Component>
+
+package "Управление пользователями" {
+  class UserController {
+    +registerUser(user: User)
+    +loginUser(credentials: Credentials)
+    +getUserProfile(userId: String): UserProfile
+  }
+
+  class AuthService {
+    +authenticate(credentials: Credentials): boolean
+    +logout(userId: String)
+  }
+
+  class UserProfileService {
+    +getUserProfile(userId: String): UserProfile
+    +updateUserProfile(userId: String, profile: UserProfile)
+  }
+
+  class User {
+    +id: String
+    +username: String
+    +password: String
+    +email: String
+  }
+
+  class UserProfile {
+    +userId: String
+    +firstName: String
+    +lastName: String
+    +address: String
+  }
+
+  class Credentials {
+    +username: String
+    +password: String
+  }
+
+  UserController --> AuthService : Uses
+  UserController --> UserProfileService : Uses
+  AuthService --> User : Authenticates user
+  UserProfileService --> UserProfile : Retrieves/Updates profile
+}
+
+@enduml

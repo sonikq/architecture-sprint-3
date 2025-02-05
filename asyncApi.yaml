@@ -1,0 +1,227 @@
+asyncapi: 3.0.0
+info:
+  title: Device and Heating Management API
+  version: 1.0.0
+  description: >
+    Описание асинхронного взаимодействия между микросервисами: "Управление устройствами" и "Управление отоплением".
+    Взаимодействие осуществляется через Kafka.
+servers:
+  production:
+    host: 'localhost:9092'
+    protocol: kafka
+channels:
+  device/temperature/measurement:
+    address: device/temperature/measurement
+    messages:
+      receiveTemperatureMeasurement.message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+              format: uuid
+              description: ID устройства
+            temperature:
+              type: number
+              format: float
+              description: Температура устройства
+            timestamp:
+              type: string
+              format: date-time
+              description: Время измерения температуры
+    description: Канал для отправки данных о температуре устройства отопления.
+  device/temperature/control:
+    address: device/temperature/control
+    messages:
+      sendTemperatureControl.message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+              format: uuid
+              description: ID устройства
+            target_temperature:
+              type: number
+              format: float
+              description: Целевая температура устройства
+            timestamp:
+              type: string
+              format: date-time
+              description: Время отправки команды
+    description: Канал для отправки команды на изменение температуры отопления.
+  heating/state/change:
+    address: heating/state/change
+    messages:
+      receiveHeatingStateChange.message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+              format: uuid
+              description: ID устройства
+            new_state:
+              type: string
+              description: 'Новое состояние устройства (например, "ON", "OFF")'
+            timestamp:
+              type: string
+              format: date-time
+              description: Время изменения состояния
+    description: Канал для отправки уведомлений о смене состояния устройства отопления.
+  device/status/request:
+    address: device/status/request
+    messages:
+      sendDeviceStatusRequest.message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+              format: uuid
+              description: ID устройства
+    description: Канал для запроса состояния устройства отопления.
+  heating/error/notification:
+    address: heating/error/notification
+    messages:
+      sendHeatingErrorNotification.message:
+        contentType: application/json
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: string
+              format: uuid
+              description: ID устройства
+            error_type:
+              type: string
+              description: 'Тип ошибки (например, "temperature_over_limit")'
+            message:
+              type: string
+              description: Сообщение об ошибке
+            timestamp:
+              type: string
+              format: date-time
+              description: Время возникновения ошибки
+    description: Канал для отправки уведомлений о проблемах с устройством отопления.
+operations:
+  receiveTemperatureMeasurement:
+    action: send
+    channel:
+      $ref: '#/channels/device~1temperature~1measurement'
+    description: Получение данных о температуре устройства отопления.
+    messages:
+      - $ref: >-
+          #/channels/device~1temperature~1measurement/messages/receiveTemperatureMeasurement.message
+  sendTemperatureControl:
+    action: send
+    channel:
+      $ref: '#/channels/device~1temperature~1control'
+    description: Отправка команды на изменение температуры устройства отопления.
+    messages:
+      - $ref: >-
+          #/channels/device~1temperature~1control/messages/sendTemperatureControl.message
+  receiveHeatingStateChange:
+    action: send
+    channel:
+      $ref: '#/channels/heating~1state~1change'
+    description: Получение уведомлений о смене состояния устройства отопления.
+    messages:
+      - $ref: >-
+          #/channels/heating~1state~1change/messages/receiveHeatingStateChange.message
+  sendDeviceStatusRequest:
+    action: receive
+    channel:
+      $ref: '#/channels/device~1status~1request'
+    description: Отправка запроса на получение состояния устройства отопления.
+    messages:
+      - $ref: >-
+          #/channels/device~1status~1request/messages/sendDeviceStatusRequest.message
+  sendHeatingErrorNotification:
+    action: receive
+    channel:
+      $ref: '#/channels/heating~1error~1notification'
+    description: Отправка уведомлений о проблемах с отопительным устройством.
+    messages:
+      - $ref: >-
+          #/channels/heating~1error~1notification/messages/sendHeatingErrorNotification.message
+components:
+  messages:
+    TemperatureMeasurement:
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          device_id:
+            type: string
+            format: uuid
+            description: ID устройства
+          temperature:
+            type: number
+            format: float
+            description: Температура устройства
+          timestamp:
+            type: string
+            format: date-time
+            description: Время измерения температуры
+    TemperatureControl:
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          device_id:
+            type: string
+            format: uuid
+            description: ID устройства
+          target_temperature:
+            type: number
+            format: float
+            description: Целевая температура устройства
+          timestamp:
+            type: string
+            format: date-time
+            description: Время отправки команды
+    HeatingStateChange:
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          device_id:
+            type: string
+            format: uuid
+            description: ID устройства
+          new_state:
+            type: string
+            description: Новое состояние устройства
+    DeviceStatusRequest:
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          device_id:
+            type: string
+            format: uuid
+            description: ID устройства
+    HeatingErrorNotification:
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          device_id:
+            type: string
+            format: uuid
+            description: ID устройства
+          error_type:
+            type: string
+            description: Тип ошибки
+          message:
+            type: string
+            description: Сообщение об ошибке
+          timestamp:
+            type: string
+            format: date-time
+            description: Время возникновения ошибки

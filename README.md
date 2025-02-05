@@ -1,5 +1,7 @@
 # Базовая настройка
 
+## Выполненные задания спринта находятся в файле: 'Project_template_part_1'.
+
 ## Запуск minikube
 
 [Инструкция по установке](https://minikube.sigs.k8s.io/docs/start/)

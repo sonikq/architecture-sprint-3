@@ -1,0 +1,53 @@
+@startuml
+!include <C4/C4_Component>
+
+package "Управление отоплением" {
+  class HeatingController {
+    +turnOnHeating()
+    +turnOffHeating()
+    +setTemperature()
+    +getTemperature()
+  }
+
+  class CommandHandler {
+    +handleCommand(command: Command)
+  }
+
+  class StateManager {
+    +getCurrentState(): HeatingState
+    +updateState(state: HeatingState)
+  }
+
+  class HeaterController {
+    +sendCommand(command: Command)
+  }
+
+  class TemperatureService {
+    +getTemperature(): float
+    +setTemperature(value: float)
+  }
+
+  class HeatingState {
+    +isHeatingOn: boolean
+    +currentTemperature: float
+  }
+
+  class Command {
+    +commandType: CommandType
+    +temperature: float
+  }
+
+  enum CommandType {
+    ON,
+    OFF,
+    SET_TEMPERATURE
+  }
+
+  HeatingController --> CommandHandler : Uses
+  CommandHandler --> StateManager : Updates state
+  StateManager --> HeaterController : Sends commands
+  HeaterController --> TemperatureService : Adjusts temperature
+  TemperatureService --> HeatingState : Updates
+}
+
+@enduml
